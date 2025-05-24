@@ -1,14 +1,28 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const User = require('User');
-const Lesson = require('Lesson');
 
 const Progress = sequelize.define('Progress', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  userId: { type: DataTypes.INTEGER, references: { model: User, key: 'id' } },
-  lessonId: { type: DataTypes.INTEGER, references: { model: Lesson, key: 'id' } },
-  status: { type: DataTypes.ENUM('completed', 'in-progress'), defaultValue: 'in-progress' },
-  performanceStats: { type: DataTypes.JSON, defaultValue: {} },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
+  lessonId: { type: DataTypes.INTEGER, allowNull: false },
+  completed: { type: DataTypes.BOOLEAN, defaultValue: false }
+}, {
+  tableName: 'Progress',
+  timestamps: false
 });
 
-module.exports = Progress;
+const getUserProgress = async (userId) => Progress.findAll({ where: { userId } });
+
+const setProgress = async (userId, lessonId, completed) => {
+  const [progress, created] = await Progress.findOrCreate({
+    where: { userId, lessonId },
+    defaults: { completed }
+  });
+  if (!created) {
+    progress.completed = completed;
+    await progress.save();
+  }
+  return progress;
+};
+
+module.exports = { Progress, getUserProgress, setProgress };
