@@ -16,7 +16,7 @@ export default function Login() {
     setError("");
     try {
       const res = await axios.post("http://localhost:5000/api/users/login", { email, password });
-      login(res.data);
+      login(res.data); // res.data = { user, token }
       navigate("/lessons");
     } catch (err) {
       setError("Invalid credentials");

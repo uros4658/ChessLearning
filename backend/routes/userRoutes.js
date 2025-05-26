@@ -1,6 +1,9 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { getAllUsers, createUser, loginUser } = require('../models/user');
 const router = express.Router();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -28,7 +31,13 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await loginUser(email, password);
-    res.json(user);
+    // Create JWT token
+    const token = jwt.sign(
+      { id: user.id, username: user.username, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    res.json({ user, token });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
