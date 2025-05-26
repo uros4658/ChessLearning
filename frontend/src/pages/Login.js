@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import Layout from "../components/Layout";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -23,15 +24,31 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Login</button>
-      </form>
-      {error && <div style={{color:"red"}}>{error}</div>}
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
-    </div>
+    <Layout>
+      <div className="row justify-content-center">
+        <div className="col-md-5">
+          <div className="card shadow">
+            <div className="card-body">
+              <h2 className="mb-4 text-center">Login</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label>Email</label>
+                  <input className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+                <div className="mb-3">
+                  <label>Password</label>
+                  <input className="form-control" type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                </div>
+                <button className="btn btn-primary w-100" type="submit">Login</button>
+              </form>
+              {error && <div className="alert alert-danger mt-3">{error}</div>}
+              <div className="mt-3 text-center">
+                <Link to="/register">Don't have an account? Register</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 }
