@@ -15,7 +15,7 @@ const Lesson = sequelize.define('Lesson', {
   timestamps: false
 });
 
-module.exports = { Lesson, /* ...other exports... */ };
+module.exports = { Lesson };
 
 const getAllLessons = async () => Lesson.findAll({ where: { relatedLessonId: null } });
 
