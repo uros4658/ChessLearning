@@ -19,6 +19,9 @@ export default function Layout({ children }) {
           <div>
             {user ? (
               <>
+                {user.role === "admin" && (
+                  <Link className="btn btn-warning btn-sm me-2" to="/admin">Admin Dashboard</Link>
+                )}
                 <span className="navbar-text me-3">Hello, {user.username}</span>
                 <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>Logout</button>
               </>
