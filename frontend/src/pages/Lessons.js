@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
+const API_URL = process.env.REACT_APP_API_URL;
+import Leaderboard from "./Leaderboard";
 
 export default function Lessons() {
   const [lessons, setLessons] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/lessons")
+    axios.get(`${API_URL}/api/lessons`)
       .then(res => setLessons(res.data))
       .catch(() => setLessons([]));
   }, []);
@@ -33,6 +35,7 @@ export default function Lessons() {
           </div>
         ))}
       </div>
+      <Leaderboard />
     </Layout>
   );
 }

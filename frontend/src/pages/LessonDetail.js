@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
+import { AuthContext } from "../context/AuthContext";
+import NotesSection from "./NotesSection";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function LessonDetail() {
+  const { user, login } = useContext(AuthContext);
+  const [completed, setCompleted] = useState(false);
   const { id } = useParams();
   const [lesson, setLesson] = useState(null);
   const [relatedLessons, setRelatedLessons] = useState([]);
@@ -16,7 +21,7 @@ export default function LessonDetail() {
   const [boardKey, setBoardKey] = useState(0); // to force board re-render
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/lessons/${id}`)
+    axios.get(`${API_URL}/api/lessons/${id}`)
       .then(res => {
         setLesson(res.data);
         if (res.data.fen) setChess(new Chess(res.data.fen));
@@ -27,7 +32,7 @@ export default function LessonDetail() {
         setBoardKey(prev => prev + 1);
       })
       .catch(() => setLesson(null));
-    axios.get(`http://localhost:5000/api/lessons/${id}/related`)
+    axios.get(`${API_URL}/api/lessons/${id}/related`)
       .then(res => setRelatedLessons(res.data))
       .catch(() => setRelatedLessons([]));
   }, [id]);
@@ -102,6 +107,20 @@ export default function LessonDetail() {
     }
   };
 
+  const handleComplete = async () => {
+    try {
+      const res = await axios.put(`${API_URL}/api/progress/${lesson.id}`, {
+        status: "completed",
+        userId: user.id
+      });
+      setCompleted(true);
+      // Update user context with new xp/level/streak
+      login({ user: { ...user, xp: res.data.xp, level: res.data.level, streak: res.data.streak }, token: localStorage.getItem("token") });
+    } catch (err) {
+      alert("Error marking as completed");
+    }
+  };
+
   return (
     <Layout>
       <div className="row">
@@ -150,6 +169,13 @@ export default function LessonDetail() {
             </div>
           </div>
         </div>
+      </div>
+      <button className="btn btn-success mt-3" onClick={handleComplete} disabled={completed}>
+        {completed ? "Lesson Completed" : "Mark as Completed"}
+      </button>
+      <div className="mt-4">
+        <h5>Community Notes</h5>
+        <NotesSection lessonId={lesson.id} />
       </div>
     </Layout>
   );

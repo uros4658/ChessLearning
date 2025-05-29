@@ -7,7 +7,11 @@ const User = sequelize.define('User', {
   username: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   passwordHash: { type: DataTypes.STRING, allowNull: false },
-  role: { type: DataTypes.STRING, defaultValue: 'user' }
+  role: { type: DataTypes.STRING, defaultValue: 'user' },
+   xp: { type: DataTypes.INTEGER, defaultValue: 0 },
+  level: { type: DataTypes.INTEGER, defaultValue: 1 },
+  streak: { type: DataTypes.INTEGER, defaultValue: 0 },
+  lastActive: { type: DataTypes.DATE, allowNull: true }
 }, {
   tableName: 'Users',
   timestamps: false

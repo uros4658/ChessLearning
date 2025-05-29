@@ -3,6 +3,7 @@ import axios from "axios";
 import Layout from "../components/Layout";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function ManageLessons() {
   const { token, user } = useContext(AuthContext);
@@ -11,7 +12,7 @@ export default function ManageLessons() {
 
   useEffect(() => {
     if (user && user.role === "admin") {
-      axios.get("http://localhost:5000/api/lessons", {
+      axios.get(`${API_URL}/api/lessons`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setLessons(res.data))
@@ -22,7 +23,7 @@ export default function ManageLessons() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this lesson?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/lessons/${id}`, {
+        await axios.delete(`${API_URL}/api/lessons/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setLessons(lessons.filter(l => l.id !== id));

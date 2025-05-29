@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import Layout from "../components/Layout";
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 export default function AddLesson() {
   const { token, user } = useContext(AuthContext);
@@ -34,7 +36,7 @@ export default function AddLesson() {
         moves: form.moves ? form.moves.split(',').map(m => m.trim()) : [],
         explanations: form.explanations ? form.explanations.split('|').map(e => e.trim()) : []
       };
-      await axios.post("http://localhost:5000/api/lessons", lessonData, {
+      await axios.post(`${API_URL}/api/lessons`, lessonData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage("Lesson created!");

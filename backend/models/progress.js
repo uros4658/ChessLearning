@@ -25,4 +25,11 @@ const setProgress = async (userId, lessonId, completed) => {
   return progress;
 };
 
-module.exports = { Progress, getUserProgress, setProgress };
+const updateProgress = async (lessonId, status, performanceStats, userId) => {
+  return Progress.update(
+    { completed: status === "completed" },
+    { where: { lessonId, userId } }
+  );
+};
+
+module.exports = { Progress, getUserProgress, setProgress, updateProgress };

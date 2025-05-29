@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../components/Layout";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ export default function Register() {
     e.preventDefault();
     setError("");
     try {
-      await axios.post("http://localhost:5000/api/users", { username, email, password });
+      await axios.post(`${API_URL}/api/users`, { username, email, password });
       navigate("/login");
     } catch (err) {
       setError("Registration failed");

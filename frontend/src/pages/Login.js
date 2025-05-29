@@ -3,6 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../components/Layout";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", { email, password });
+      const res = await axios.post(`${API_URL}/api/users/login`, { email, password });
       login(res.data); // res.data = { user, token }
       navigate("/lessons");
     } catch (err) {

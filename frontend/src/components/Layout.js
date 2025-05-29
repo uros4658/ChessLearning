@@ -22,7 +22,13 @@ export default function Layout({ children }) {
                 {user.role === "admin" && (
                   <Link className="btn btn-warning btn-sm me-2" to="/admin">Admin Dashboard</Link>
                 )}
-                <span className="navbar-text me-3">Hello, {user.username}</span>
+                {user && (
+                  <>
+                    <span className="badge bg-success me-2">XP: {user.xp}</span>
+                    <span className="badge bg-primary me-2">Level: {user.level}</span>
+                    <span className="badge bg-warning text-dark">Streak: {user.streak} days</span>
+                  </>
+                )}
                 <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>Logout</button>
               </>
             ) : (

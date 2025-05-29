@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import { AuthContext } from "../context/AuthContext";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function ManageUsers() {
   const { token, user } = useContext(AuthContext);
@@ -10,7 +11,7 @@ export default function ManageUsers() {
 
   useEffect(() => {
     if (user && user.role === "admin") {
-      axios.get("http://localhost:5000/api/users", {
+      axios.get(`${API_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setUsers(res.data))
@@ -21,7 +22,7 @@ export default function ManageUsers() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/users/${id}`, {
+        await axios.delete(`${API_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(users.filter(u => u.id !== id));
