@@ -2,6 +2,7 @@ const express = require('express');
 const { getProgressByUserId, updateProgress } = require('../models/progress');
 const router = express.Router();
 const { User } = require('../models/user');
+const { setProgress } = require('../models/progress');
 
 // Get progress for a user
 router.get('/:userId', async (req, res) => {
@@ -19,8 +20,13 @@ router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { status, performanceStats, userId } = req.body;
   try {
-    const rowsUpdated = await updateProgress(id, status, performanceStats, userId);
-    if (rowsUpdated === 0) return res.status(404).json({ error: 'Progress not found' });
+    let rowsUpdated = await updateProgress(id, status, performanceStats, userId);
+
+    // If no row was updated, create it and update again
+    if (rowsUpdated[0] === 0) {
+      await setProgress(userId, id, status === "completed");
+      rowsUpdated = await updateProgress(id, status, performanceStats, userId);
+    }
 
     // XP, streak, level logic
     const user = await User.findByPk(userId);
@@ -31,7 +37,6 @@ router.put('/:id', async (req, res) => {
       const diff = (now - lastActive) / (1000 * 60 * 60 * 24);
       if (diff < 2 && diff >= 1) streak += 1;
       else if (diff >= 2) streak = 1;
-      // else (same day) streak unchanged
     } else {
       streak = 1;
     }

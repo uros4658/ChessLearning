@@ -13,8 +13,15 @@ router.get('/:lessonId', async (req, res) => {
 router.post('/:lessonId', async (req, res) => {
   const { lessonId } = req.params;
   const { userId, content } = req.body;
-  const note = await Note.create({ lessonId, userId, content });
-  res.status(201).json(note);
+  if (!userId || !content) {
+    return res.status(400).json({ error: "userId and content are required" });
+  }
+  try {
+    const note = await Note.create({ lessonId: Number(lessonId), userId, content });
+    res.status(201).json(note);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

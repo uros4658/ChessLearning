@@ -20,7 +20,7 @@ export default function NotesSection({ lessonId }) {
       content: note
     });
     setNote("");
-    const res = await axios.post(`${API_URL}/api/notes/${lessonId}`);
+    const res = await axios.get(`${API_URL}/api/notes/${lessonId}`);
     setNotes(res.data);
   };
   return (
