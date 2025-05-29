@@ -11,6 +11,9 @@ export default function LessonDetail() {
   const [relatedLessons, setRelatedLessons] = useState([]);
   const [chess, setChess] = useState(null);
   const [currentMove, setCurrentMove] = useState(0);
+  const [message, setMessage] = useState("");
+  const [hint, setHint] = useState("");
+  const [boardKey, setBoardKey] = useState(0); // to force board re-render
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/lessons/${id}`)
@@ -19,6 +22,9 @@ export default function LessonDetail() {
         if (res.data.fen) setChess(new Chess(res.data.fen));
         else setChess(new Chess());
         setCurrentMove(0);
+        setMessage("");
+        setHint("");
+        setBoardKey(prev => prev + 1);
       })
       .catch(() => setLesson(null));
     axios.get(`http://localhost:5000/api/lessons/${id}/related`)
@@ -28,6 +34,7 @@ export default function LessonDetail() {
 
   if (!lesson || !chess) return <Layout><div>Loading...</div></Layout>;
 
+  // Play moves up to currentMove
   const getBoard = () => {
     const chessInstance = new Chess(lesson.fen || undefined);
     if (lesson.moves && lesson.moves.length > 0) {
@@ -42,15 +49,56 @@ export default function LessonDetail() {
     return chessInstance.fen();
   };
 
-  const handleNext = () => {
-    if (lesson.moves && currentMove < lesson.moves.length) {
+  // Handle user move
+  const onPieceDrop = (sourceSquare, targetSquare) => {
+    if (!lesson.moves || currentMove >= lesson.moves.length) return false;
+    const chessInstance = new Chess(getBoard());
+    const expectedMove = lesson.moves[currentMove];
+    const legalMoves = chessInstance.moves({ verbose: true });
+    const move = legalMoves.find(
+      m => m.from === sourceSquare && m.to === targetSquare
+    );
+    if (!move) {
+      setMessage("Illegal move!");
+      setHint("");
+      return false;
+    }
+    if (move.san === expectedMove) {
+      chessInstance.move(move.san);
       setCurrentMove(currentMove + 1);
+      setMessage("Correct move!");
+      setHint("");
+      setBoardKey(prev => prev + 1);
+      return true;
+    } else {
+      setMessage("Wrong move! Try again.");
+      setHint("");
+      return false;
     }
   };
 
   const handlePrev = () => {
     if (currentMove > 0) {
       setCurrentMove(currentMove - 1);
+      setMessage("");
+      setHint("");
+      setBoardKey(prev => prev + 1);
+    }
+  };
+
+  const handleHint = () => {
+    if (lesson.moves && lesson.moves[currentMove]) {
+      setHint(`Hint: The correct move is ${lesson.moves[currentMove]}`);
+      setMessage("");
+    }
+  };
+
+  const handleNext = () => {
+    if (lesson.moves && currentMove < lesson.moves.length) {
+      setCurrentMove(currentMove + 1);
+      setMessage(`Moved to next step. The correct move was: ${lesson.moves[currentMove]}`);
+      setHint("");
+      setBoardKey(prev => prev + 1);
     }
   };
 
@@ -64,14 +112,22 @@ export default function LessonDetail() {
               <h5>{lesson.title}</h5>
               <div>{lesson.content}</div>
               <div className="my-3 d-flex flex-column align-items-center">
-                <Chessboard position={getBoard()} arePiecesDraggable={false} />
+                <Chessboard
+                  key={boardKey}
+                  position={getBoard()}
+                  onPieceDrop={onPieceDrop}
+                  arePiecesDraggable={true}
+                />
                 <div className="mt-3">
                   <button className="btn btn-secondary me-2" onClick={handlePrev} disabled={currentMove === 0}>Previous</button>
-                  <button className="btn btn-secondary" onClick={handleNext} disabled={!lesson.moves || currentMove === lesson.moves.length}>Next</button>
+                  <button className="btn btn-info me-2" onClick={handleHint} disabled={currentMove >= (lesson.moves ? lesson.moves.length : 0)}>Hint</button>
+                  <button className="btn btn-success" onClick={handleNext} disabled={currentMove >= (lesson.moves ? lesson.moves.length : 0)}>Next</button>
                 </div>
+                {hint && <div className="alert alert-info mt-3">{hint}</div>}
                 {lesson.explanations && lesson.explanations[currentMove - 1] && (
                   <div className="alert alert-info mt-3">{lesson.explanations[currentMove - 1]}</div>
                 )}
+                {message && <div className="alert alert-warning mt-3">{message}</div>}
               </div>
             </div>
           </div>

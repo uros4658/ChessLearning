@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllLessons, createLesson, getLessonById, updateLesson, deleteLesson } = require('../models/lesson');
+const { Lesson, getAllLessons, createLesson, getLessonById, updateLesson, deleteLesson } = require('../models/lesson');
 const adminOnly = require('../middleware/admin');
 const router = express.Router();
 
