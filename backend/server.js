@@ -6,12 +6,13 @@ const userRoutes = require('./routes/userRoutes');
 const lessonRoutes = require('./routes/lessonRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const noteRoutes = require('./routes/noteRoutes');
+const followRoutes = require('./routes/followRoutes');
 
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 // Routes
@@ -19,6 +20,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/notes', noteRoutes);
+app.use('/api/follows', followRoutes);
 
 // Sync database
 sequelize.sync({ alter: true }).then(() => {

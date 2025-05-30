@@ -24,13 +24,13 @@ export default function Layout({ children }) {
                 )}
                 {user && (
                   <>
+                    <Link className="btn btn-outline-light btn-sm me-2" to="/follow">Follow People</Link>
                     <span className="badge bg-success me-2">XP: {user.xp}</span>
                     <span className="badge bg-primary me-2">Level: {user.level}</span>
                     <span className="badge bg-warning text-dark">Streak: {user.streak} days</span>
                   </>
                 )}
-                <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>Logout</button>
-              </>
+                  <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>Logout</button>              </>
             ) : (
               <>
                 <Link className="btn btn-outline-light btn-sm me-2" to="/login">Login</Link>

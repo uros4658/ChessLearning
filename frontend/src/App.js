@@ -10,6 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ManageUsers from "./pages/ManageUsers";
 import Leaderboard from "./pages/Leaderboard";
 import ManageLessons from "./pages/ManageLessons";
+import FollowPage from "./pages/FollowPage";
+
 
 
 
@@ -39,6 +41,7 @@ export default function App() {
           <Route path="/manage-users" element={<AdminRoute><ManageUsers /></AdminRoute>} />
           <Route path="/manage-lessons" element={<AdminRoute><ManageLessons /></AdminRoute>} />
           <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
+          <Route path="/follow" element={<PrivateRoute><FollowPage /></PrivateRoute>} />
         </Routes>
       </Router>
     </AuthProvider>
