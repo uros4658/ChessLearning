@@ -132,7 +132,6 @@ export default function LessonDetail() {
               <div>{lesson.content}</div>
               <div className="my-3 d-flex flex-column align-items-center">
                 <Chessboard
-                  key={boardKey}
                   position={getBoard()}
                   onPieceDrop={onPieceDrop}
                   arePiecesDraggable={true}
