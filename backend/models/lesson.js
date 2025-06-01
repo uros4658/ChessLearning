@@ -21,8 +21,8 @@ const getAllLessons = async () => Lesson.findAll({ where: { relatedLessonId: nul
 
 const getLessonById = async (id) => Lesson.findByPk(id);
 
-const createLesson = async (title, content, relatedLessonId = null) => {
-  const lesson = await Lesson.create({ title, content, relatedLessonId });
+const createLesson = async (title, content, relatedLessonId = null, fen = null, moves = null, type, explanations = null) => {
+  const lesson = await Lesson.create({ title, content, relatedLessonId, fen, moves, type, explanations });
   return lesson.id;
 };
 

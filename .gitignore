@@ -9,6 +9,8 @@ yarn-error.log*
 logs/
 *.log
 
+*.docx
+
 # OS
 .DS_Store
 Thumbs.db

@@ -15,10 +15,10 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new lesson
-router.post('/', async (req, res) => {
-  const { title, content, level, difficulty, topic, interactiveData } = req.body;
+router.post('/', adminOnly, async (req, res) => {
+  const { title, content, relatedLessonId, fen, moves, type, explanations } = req.body;
   try {
-    const lessonId = await createLesson(title, content, level, difficulty, topic, interactiveData);
+    const lessonId = await createLesson(title, content, relatedLessonId, fen, moves, type, explanations);
     res.status(201).json({ id: lessonId });
   } catch (err) {
     res.status(400).json({ error: err.message });
